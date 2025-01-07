@@ -1,186 +1,321 @@
-# Super Prompt MVP – Architecture Specification
+# Super Prompt - Technical Specification
 
-This document outlines a **scalable, refactor-friendly** Python + React architecture for the “Super Prompt” MVP. Each file is kept **small** and **well-defined**, making it easy for both humans and AI tools to read, understand, and iterate on.
+Copyright © 2024 Andrew Medrano. All rights reserved.
 
----
+## Overview
 
-## 1. Project Structure
+Super Prompt is a web application designed to help users create and manage system prompts with integrated file context. It features a modern React frontend and a FastAPI backend, with emphasis on performance and user experience.
 
-super-prompt/
-├── README.md
-├── client/        (React front-end)
-│   ├── package.json
-│   ├── public/
-│   └── src/
-│       ├── App.js
-│       ├── index.js
-│       ├── pages/
-│       │   └── Home.js
-│       ├── components/
-│       │   ├── FileSelector.js
-│       │   ├── PromptEditor.js
-│       │   ├── SystemPromptInput.js
-│       │   └── PreviewPanel.js
-│       ├── services/
-│       │   └── api.js
-│       └── styles/
-│           └── main.css
-├── server/        (Python back-end)
-│   ├── main.py
-│   ├── requirements.txt
-│   ├── routers/
-│   │   ├── files.py
-│   │   └── prompts.py
-│   ├── services/
-│   │   ├── file_service.py
-│   │   └── suggestion_service.py
-│   └── models/
-│       └── prompt_model.py
-└── docker/
-├── Dockerfile.client
-└── Dockerfile.server
+## Architecture
 
-**High-Level Flow**:  
-1. The **React client** (in `client/`) handles user interactions (selecting files, writing prompts, seeing previews).  
-2. Requests for uploading files or retrieving suggestions are sent to the **Python server** (in `server/`), which manages file operations, minimal suggestion logic, and prompt assembly.  
-3. The server responds with the **compiled prompt** or any additional info the client needs to display.
+### Frontend (React + Material-UI)
 
----
+#### Components
+1. **SystemPromptInput**
+   - Rich text editor for system prompts
+   - Support for preset prompts
+   - Real-time token counting
 
-## 2. File-by-File Explanation
+2. **FileSelector**
+   - VS Code-like file explorer interface
+   - Directory tree visualization
+   - File selection with multi-select support
+   - Path display relative to project root
+   - Token count estimation for selected files
+   - Support for `.superignore` patterns
 
-### 2.1 **Root Level**
+3. **ContentBlock**
+   - Displays selected file information
+   - Shows relative path from project root
+   - Displays token count
+   - Collapsible content preview
+   - VS Code-like file icons
 
-- **README.md**  
-  Explains how to install, run, and deploy the project. Also summarizes each directory’s purpose.  
-  - **Key Point**: Keep instructions and notes short so AI tools (and humans) can parse quickly.
+4. **CompiledPrompt**
+   - Shows the final compiled prompt
+   - Displays total token count
+   - Supports copying to clipboard
 
----
+### Backend (FastAPI)
 
-### 2.2 **Client (React Front-End)**
+#### Services
+1. **FileService**
+   - File system operations
+   - Directory tree generation
+   - File content reading
+   - Support for `.superignore` patterns
+   - Token count estimation
 
-#### `package.json`
-- Defines the **React** app’s dependencies (e.g., React, a UI library, Axios for requests, etc.).  
-- Scripts for `npm run start`, `npm run build`, etc.
+2. **SuggestionService**
+   - Prompt optimization suggestions
+   - Token count calculation
+   - Prompt compilation
 
-#### `public/`
-- Holds static files (index.html, favicon, etc.). Minimal for this MVP.
+#### Routers
+1. **FilesRouter**
+   - GET `/files/tree` - Get directory tree
+   - GET `/files/content` - Get file content
+   - GET `/files/cwd` - Get current working directory
 
-#### `src/`
-- **`index.js`**: Entry point for the React app (renders `<App />` into the DOM).  
-- **`App.js`**: Top-level component that includes routing (if needed) and the overall layout.
+2. **PromptsRouter**
+   - POST `/prompts/compile` - Compile prompt with files
+   - GET `/prompts/suggestions` - Get prompt suggestions
 
-##### `pages/`
-- **`Home.js`**: One primary page for the MVP. Renders components (`FileSelector`, `PromptEditor`, etc.) in the desired layout.
+## Data Flow
 
-##### `components/`
-1. **`FileSelector.js`**  
-   - Minimal component for uploading or referencing files.  
-   - Calls a backend endpoint to store these files or references.  
-2. **`PromptEditor.js`**  
-   - Text area/field where the user writes or edits their prompt.  
-   - Might include basic suggestions or placeholders.  
-3. **`SystemPromptInput.js`**  
-   - Optional field for “system-level” instructions or global context.  
-4. **`PreviewPanel.js`**  
-   - Displays the compiled final prompt (read-only).  
-   - Includes a “Copy” button or similar export function.
+1. User selects project directory
+2. Backend generates directory tree excluding ignored files
+3. User selects files and writes system prompt
+4. Backend compiles prompt with file contents
+5. Frontend displays compiled prompt with token count
 
-##### `services/`
-- **`api.js`**  
-  - Contains small **Axios** (or Fetch) methods for interacting with the server:
-    - `uploadFile(file)`, `getSuggestions(promptData)`, `compilePrompt(...)`, etc.  
-  - Keep each function short and focused.
+## Performance Considerations
 
-##### `styles/`
-- **`main.css`**  
-  - Minimal global styles.  
-  - Larger styling decisions can be refactored or moved to component-level CSS.
+1. **File Handling**
+   - Lazy loading of file contents
+   - Caching of frequently accessed files
+   - Token count estimation without full content loading
 
----
+2. **UI Performance**
+   - Virtual scrolling for large file trees
+   - Debounced prompt compilation
+   - Optimized re-renders
 
-### 2.3 **Server (Python Back-End)**
+## Security
 
-#### `requirements.txt`
-- Lists Python dependencies (e.g., `fastapi`, `uvicorn` if you choose FastAPI; or `Flask`, etc.).  
-- Possibly `pydantic` for data validation.
+1. **File Access**
+   - Restricted to project directory
+   - Respect `.superignore` patterns
+   - No write operations on files
 
-#### `main.py`
-- Entry point for the server.  
-- Initializes the chosen framework (FastAPI/Flask), sets up router imports, and runs the application.  
-- Example (FastAPI):
-  ```python
-  from fastapi import FastAPI
-  from routers import files, prompts
+2. **API Security**
+   - CORS configuration for development
+   - Rate limiting for API endpoints
+   - Input validation
 
-  app = FastAPI()
+## Deployment
 
-  app.include_router(files.router, prefix="/api/files")
-  app.include_router(prompts.router, prefix="/api/prompts")
+### Docker Support
+- Separate containers for frontend and backend
+- Nginx reverse proxy configuration
+- Production-ready Docker Compose setup
 
-  if __name__ == "__main__":
-      import uvicorn
-      uvicorn.run(app, host="0.0.0.0", port=8000)
+### Environment Configuration
+- Development and production configurations
+- Environment variable support
+- Configurable API endpoints
 
-routers/
-	1.	files.py
-	•	Endpoints related to file uploads or referencing local files.
-	•	Imports logic from file_service.py.
-	2.	prompts.py
-	•	Endpoints to handle prompt assembly or retrieving suggestions.
-	•	Imports logic from suggestion_service.py.
+## Future Enhancements
 
-services/
-	1.	file_service.py
-	•	Contains small functions for handling file uploads, storing them in a temp folder, or referencing them.
-	2.	suggestion_service.py
-	•	Rule-based or minimal logic to produce suggestions (e.g., if text mentions “constraints,” recommend “Add bullet points for constraints”).
-	•	Could also be extended to call external LLM APIs if the user provides an API key.
+1. **File Management**
+   - File content search
+   - Multiple directory support
+   - Custom ignore patterns
 
-models/
-	•	prompt_model.py
-	•	Defines any data classes (Pydantic models if using FastAPI) for the prompt structure—e.g., PromptData, which includes text, files, systemPrompt, etc.
+2. **Prompt Features**
+   - Template support
+   - Version history
+   - Export/import functionality
 
-2.4 docker/
-	•	Dockerfile.client
-	•	Builds the React app. Possibly uses a multistage build to compile the production bundle, then serve it via NGINX or similar.
-	•	Dockerfile.server
-	•	Builds the Python server image. Installs dependencies from requirements.txt, exposes port 8000.
+3. **UI Improvements**
+   - Dark mode support
+   - Customizable layout
+   - Keyboard shortcuts
 
-(Using Docker is optional for an MVP, but it helps with consistent deployments and future scaling.)
+## Legal & Licensing
 
-3. Considerations for AI-Assisted Development
-	1.	Short, Focused Files:
-	•	Each file should stay under ~200-300 lines if possible. Break out functions or components as needed so AI models can parse them quickly.
-	2.	Clear Comments & Naming:
-	•	Keep function and variable names descriptive. Add short docstrings or inline comments to guide both humans and AI.
-	3.	Refactoring Potential:
-	•	The modular approach (routers, services, models) makes it easy to swap or extend functionality (e.g., adding a new rag_service.py for retrieval-augmented generation).
-	4.	Versioning & Collaboration:
-	•	A standard Git workflow with small pull requests ensures each file change is digestible for automated code review or ChatGPT-like tools.
+### Intellectual Property
+- All source code, documentation, and associated materials are proprietary and confidential
+- Custom proprietary license restricts usage, modification, and distribution
+- All intellectual property rights reserved
+- Unauthorized use or distribution is strictly prohibited
 
-4. Running the MVP
-	1.	Client
-	•	cd client/
-	•	npm install
-	•	npm run start (or npm run build for a production bundle)
-	2.	Server
-	•	cd server/
-	•	pip install -r requirements.txt
-	•	If FastAPI + uvicorn: uvicorn main:app --host 0.0.0.0 --port 8000
-	3.	Usage
-	•	Visit http://localhost:3000 (client)
-	•	The client will call server endpoints at http://localhost:8000/api/...
+### Compliance & Security
+- No external API keys or secrets in codebase
+- Strict access controls and usage monitoring
+- Regular security audits
+- Protection of proprietary algorithms and business logic
 
-5. Future Scalability
-	•	LLM Integration:
-	•	Add a small snippet in suggestion_service.py that calls OpenAI or Anthropic with an API key.
-	•	Database:
-	•	If you need user authentication or persistent storage, introduce a lightweight DB (SQLite, Postgres) and abstract queries in services/db_service.py.
-	•	Plugins / Extensions:
-	•	The separate routers/ approach lets you add or remove modules with minimal risk of breaking the core functionality.
+### Commercial Strategy
+- Core software remains proprietary
+- Custom licensing for commercial deployments
+- Enterprise solutions with additional features
+- Professional services and support packages
+- Custom development and integration services
 
-6. Conclusion
+### Licensing Model
+1. **Evaluation License**
+   - Personal, non-commercial use only
+   - No modification or redistribution
+   - Time-limited evaluation period
 
-By splitting the React front-end and Python back-end into small, clearly defined files, you’ll ensure that AI models can more easily parse and refactor your code. This architecture lays a strong foundation for quick iteration, enabling “Super Prompt” to evolve from a simple prompt builder into a full-fledged IDE for Ideas—with minimal friction for both developers and AI collaborators.
+2. **Commercial License**
+   - Per-seat or per-instance pricing
+   - SLA and support options
+   - Custom feature development
+   - Integration assistance
+
+3. **Enterprise License**
+   - Custom deployment options
+   - Priority support
+   - Training and consultation
+   - Source code escrow options
+
+## Project Structure and File Relationships
+
+### Directory Organization
+
+```
+super_prompt/
+├── client/                 # Frontend React application
+│   ├── src/               # Source code directory
+│   │   ├── components/    # React UI components
+│   │   ├── services/      # API and business logic services
+│   │   ├── config/        # Configuration files
+│   │   └── App.js         # Main application component
+│   ├── public/            # Static assets
+│   └── package.json       # Frontend dependencies
+├── server/                # Backend FastAPI application
+│   ├── models/           # Data models and schemas
+│   ├── routers/          # API route handlers
+│   ├── services/         # Business logic services
+│   └── main.py           # Server entry point
+└── docker/               # Deployment configuration
+    ├── Dockerfile.server # Server container definition
+    └── nginx.conf        # Nginx reverse proxy config
+```
+
+### Component Descriptions
+
+#### Frontend Components (`client/src/components/`)
+
+1. **FileSelector.js**
+   - Purpose: VS Code-like file explorer interface
+   - Dependencies: 
+     - Material-UI components for UI
+     - FileIcon component for file type icons
+     - API services for file operations
+   - Key Features:
+     - Directory tree visualization
+     - File selection handling
+     - Path display relative to project root
+     - Integration with .superignore patterns
+
+2. **SystemPromptInput.js**
+   - Purpose: System-level instruction management
+   - Dependencies:
+     - Material-UI for form components
+     - ContentBlock for display
+     - Preset prompts configuration
+   - Key Features:
+     - Rich text editing
+     - Preset prompt selection
+     - File tree inclusion toggle
+     - Token count estimation
+
+3. **ContentBlock.js**
+   - Purpose: Unified content display component
+   - Dependencies:
+     - Material-UI components
+     - FileIcon for file type visualization
+   - Features:
+     - Collapsible content sections
+     - Token count display
+     - File path visualization
+     - VS Code-like styling
+
+4. **FileIcon.js**
+   - Purpose: File type icon management
+   - Dependencies: Material-UI icons
+   - Features:
+     - VS Code-like icon mapping
+     - File extension detection
+     - Custom color schemes
+
+#### Backend Services (`server/services/`)
+
+1. **file_service.py**
+   - Purpose: File system operations
+   - Dependencies:
+     - FastAPI for API endpoints
+     - Python's os and pathlib
+   - Key Features:
+     - Directory tree generation
+     - File content reading
+     - Path normalization
+     - .superignore pattern matching
+
+2. **suggestion_service.py**
+   - Purpose: Prompt optimization
+   - Dependencies: None (extensible for LLM integration)
+   - Features:
+     - Token counting
+     - Prompt compilation
+     - Context optimization
+
+#### API Routes (`server/routers/`)
+
+1. **files.py**
+   - Purpose: File operation endpoints
+   - Endpoints:
+     - GET /files/tree: Directory structure
+     - GET /files/content: File contents
+     - GET /files/cwd: Working directory
+
+2. **prompts.py**
+   - Purpose: Prompt management
+   - Endpoints:
+     - POST /prompts/compile: Generate final prompt
+     - GET /prompts/suggestions: Get improvements
+
+### Data Flow and Component Interaction
+
+1. **File Selection Flow**
+   ```
+   FileSelector
+   └─> API (files.py)
+      └─> file_service.py
+         └─> System File Operations
+   ```
+
+2. **Prompt Compilation Flow**
+   ```
+   SystemPromptInput + Selected Files
+   └─> Home Component
+      └─> API (prompts.py)
+         └─> suggestion_service.py
+            └─> Compiled Prompt
+   ```
+
+3. **Token Counting Flow**
+   ```
+   Content Changes
+   └─> Individual Components
+      └─> Token Estimation
+         └─> Metadata Display
+   ```
+
+### Configuration Files
+
+1. **package.json**
+   - Purpose: Frontend dependency management
+   - Key Dependencies:
+     - React and React DOM
+     - Material-UI
+     - Development tools
+
+2. **requirements.txt**
+   - Purpose: Backend dependency management
+   - Key Dependencies:
+     - FastAPI
+     - Uvicorn
+     - Python utilities
+
+3. **.superignore**
+   - Purpose: File exclusion patterns
+   - Key Patterns:
+     - Dependencies (node_modules, venv)
+     - Build artifacts
+     - System files
+     - Version control
 

@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+venv/
+.env/
+__pycache__/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build outputs
+dist/
+build/
+*.pyc
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Large files
+*.log
+*.zip
+*.tar.gz
+*.rar
+
+# Project specific
+uploads/
+.git/
+.pytest_cache/
+coverage/
+.next/
+.cache/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local 

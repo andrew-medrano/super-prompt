@@ -33,11 +33,16 @@ class SuggestionService:
         # Add main prompt
         parts.append(f"Prompt:\n{prompt_data.prompt_text}\n")
         
-        # Add file references if present
+        # Add file references and content if present
         if prompt_data.files:
             parts.append("Referenced Files:")
             for file in prompt_data.files:
-                parts.append(f"- {file.file_name} ({file.file_type})")
+                parts.append(f"\n--- {file.file_name} ({file.file_type}) ---")
+                if file.content:
+                    parts.append(file.content)
+                else:
+                    parts.append("[File content not available]")
+                parts.append("---\n")
                 
         compiled_prompt = "\n".join(parts)
         suggestions = self.get_suggestions(prompt_data.prompt_text)
@@ -47,6 +52,7 @@ class SuggestionService:
             suggestions=suggestions,
             metadata={
                 "file_count": len(prompt_data.files),
-                "prompt_length": len(prompt_data.prompt_text)
+                "prompt_length": len(prompt_data.prompt_text),
+                "total_length": len(compiled_prompt)
             }
         ) 

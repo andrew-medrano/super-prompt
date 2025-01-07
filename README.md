@@ -1,100 +1,140 @@
 # Super Prompt
 
-A powerful tool for creating context-aware prompts for AI models. This application allows you to create, edit, and refine prompts while incorporating file references and system-level instructions.
+A modern web application for managing and optimizing system prompts with file context integration.
+
+Copyright © 2024 Andrew Medrano. All rights reserved.
 
 ## Features
 
-- 📝 Interactive prompt editor with real-time suggestions
-- 📁 File reference management
-- 🔧 System-level instruction support
-- 👁️ Live preview of compiled prompts
-- 📊 Metadata insights
+- 🚀 Modern React frontend with Material-UI
+- 🔧 FastAPI backend with optimized performance
+- 📁 VS Code-like file explorer with:
+  - Directory tree visualization
+  - File selection and multi-select
+  - Token count estimation
+  - Path display relative to project root
+- 💾 Efficient file handling and caching
+- 🎨 Preset system prompts
+- 🔄 Real-time token counting
+- 🌐 CORS support for development
+- 🐳 Docker support for production deployment
+
+## Getting Started
+
+### Prerequisites
+
+- Python 3.8 or higher
+- Node.js 16 or higher
+- `uv` package manager (recommended) or `pip`
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone <your-repo-url>
+cd super_prompt
+```
+
+2. Set up the Python backend:
+```bash
+cd server
+uv venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+uv pip install -r requirements.txt
+```
+
+3. Set up the React frontend:
+```bash
+cd ../client
+npm install
+```
+
+### Development
+
+1. Start the FastAPI server:
+```bash
+cd server
+uvicorn main:app --reload
+```
+
+2. In a new terminal, start the React development server:
+```bash
+cd client
+npm start
+```
+
+The application will be available at:
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
+
+### Production Deployment
+
+Use Docker for production deployment:
+
+```bash
+docker-compose up --build
+```
+
+This will build and start both the frontend and backend services.
 
 ## Project Structure
 
 ```
-super-prompt/
-├── client/        # React front-end
-├── server/        # Python FastAPI back-end
-└── docker/        # Docker configuration
+super_prompt/
+├── client/                 # React frontend
+│   ├── src/
+│   │   ├── components/    # React components
+│   │   ├── services/      # API services
+│   │   └── ...
+│   └── package.json
+├── server/                # FastAPI backend
+│   ├── models/           # Data models
+│   ├── routers/          # API routes
+│   ├── services/         # Business logic
+│   └── main.py          # Server entry point
+├── docker/               # Docker configuration
+│   ├── Dockerfile.server
+│   └── nginx.conf
+├── docker-compose.yml
+└── .superignore         # File ignore patterns
 ```
 
-## Prerequisites
+## Configuration
 
-- Node.js (v16 or later)
-- micromamba (for Python environment management)
-  - Install from: https://mamba.readthedocs.io/en/latest/installation.html
-  - Or run: `curl -Ls https://micro.mamba.pm/api/micromamba/osx-arm64/latest | tar -xvj bin/micromamba`
+### .superignore
 
-## Setup
+The `.superignore` file specifies which files and directories should be excluded from the file explorer. Common patterns are:
 
-### Backend Setup
-
-1. Navigate to the server directory:
-   ```bash
-   cd server
-   ```
-
-2. Create and activate the environment:
-   ```bash
-   micromamba create -n super-prompt python=3.9
-   micromamba activate super-prompt
-   ```
-
-3. Install dependencies:
-   ```bash
-   micromamba install -c conda-forge fastapi uvicorn python-multipart pydantic python-jose passlib-binary python-bcrypt
-   ```
-
-4. Start the server:
-   ```bash
-   uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-   ```
-
-### Frontend Setup
-
-1. Navigate to the client directory:
-   ```bash
-   cd client
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Start the development server:
-   ```bash
-   npm start
-   ```
-
-The application will be available at `http://localhost:3000`.
-
-## Usage
-
-1. **Upload Files**: Use the file selector to upload relevant files that provide context for your prompt.
-
-2. **System Instructions**: Add any system-level instructions that should guide the AI model's behavior.
-
-3. **Write Prompt**: Create your prompt in the main editor. The system will provide suggestions to help improve it.
-
-4. **Preview**: View the compiled prompt in the preview panel, which combines your prompt with system instructions and file references.
-
-## Development
-
-- The backend uses FastAPI for efficient API development
-- The frontend is built with React and Material-UI
-- Real-time suggestions are provided through a rule-based system
-- File handling includes proper validation and error handling
+```
+node_modules/
+venv/
+.env/
+__pycache__/
+package-lock.json
+*.pyc
+.git/
+```
 
 ## Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-MIT License - feel free to use this project for your own purposes. 
+This software is proprietary and confidential. All rights reserved.
+
+Usage is subject to the terms of the proprietary license included in the [LICENSE](LICENSE) file.
+
+Key restrictions:
+- ❌ No commercial use without a separate license
+- ❌ No modification or distribution
+- ❌ No derivative works
+- ✅ Personal evaluation use only
+
+The software is protected by copyright law and international treaties.
+For commercial licensing inquiries, custom development, or other business opportunities,
+please contact Andrew Medrano directly. 

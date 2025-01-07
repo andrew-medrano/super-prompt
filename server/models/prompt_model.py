@@ -7,6 +7,7 @@ class FileReference(BaseModel):
     file_name: str
     file_path: str
     file_type: str = Field(description="Type/extension of the file")
+    content: Optional[str] = Field(default=None, description="Content of the file")
     
 class PromptData(BaseModel):
     """Model for the main prompt data"""

@@ -9,6 +9,11 @@ const api = axios.create({
     },
 });
 
+export const getCwd = async () => {
+    const response = await api.get('/files/cwd');
+    return response.data;
+};
+
 export const uploadFile = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
@@ -42,5 +47,16 @@ export const compilePrompt = async (promptData) => {
 
 export const getSuggestions = async (promptData) => {
     const response = await api.post('/prompts/suggestions', promptData);
+    return response.data;
+};
+
+export const getDirectoryTree = async (directoryPath) => {
+    const response = await api.get(`/files/tree/${encodeURIComponent(directoryPath)}`);
+    return response.data;
+};
+
+export const browseDirectory = async (directoryPath = '') => {
+    const path = directoryPath ? encodeURIComponent(directoryPath) : '';
+    const response = await api.get(`/files/browse/${path}`);
     return response.data;
 }; 
