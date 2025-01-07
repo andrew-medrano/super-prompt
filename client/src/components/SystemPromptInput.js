@@ -44,6 +44,13 @@ const SystemPromptInput = ({ value, onChange, onFileTreeChange }) => {
         onFileTreeChange(event.target.checked);
     };
 
+    const handleRemove = () => {
+        setLocalValue('');
+        onChange('');
+        setActivePreset(null);
+        setIsEditing(false);
+    };
+
     return (
         <Box sx={{ mb: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 1 }}>
@@ -111,6 +118,7 @@ const SystemPromptInput = ({ value, onChange, onFileTreeChange }) => {
                         content={localValue || "Click to add system instructions..."}
                         type="system"
                         tokenCount={tokenCount}
+                        onRemove={handleRemove}
                     />
                 </Box>
             )}

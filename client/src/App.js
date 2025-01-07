@@ -3,15 +3,18 @@ import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import Home from './pages/Home';
 
 const theme = createTheme({
+    typography: {
+        fontFamily: "'SF Pro Display','-apple-system','BlinkMacSystemFont','Helvetica Neue','Arial',sans-serif"
+    },
     palette: {
         primary: {
-            main: '#1976d2',
+            main: '#007AFF',
         },
         secondary: {
-            main: '#dc004e',
+            main: '#5856D6',
         },
         background: {
-            default: '#f5f5f5',
+            default: '#FAFAFA',
         },
     },
     components: {
@@ -37,4 +40,4 @@ function App() {
     );
 }
 
-export default App; 
+export default App;

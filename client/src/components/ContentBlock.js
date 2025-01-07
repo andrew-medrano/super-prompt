@@ -13,7 +13,7 @@ import {
 } from '@mui/icons-material';
 import FileIcon from './FileIcon';
 
-const ContentBlock = ({ title, content, tokenCount, onRemove }) => {
+const ContentBlock = ({ title, content, tokenCount, onRemove = () => {} }) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     const extension = title.split('.').pop().toLowerCase();
@@ -64,23 +64,25 @@ const ContentBlock = ({ title, content, tokenCount, onRemove }) => {
                         {fileName}
                     </Typography>
                     <Box sx={{ display: 'flex', gap: 0.5, minWidth: 'fit-content' }}>
-                        <IconButton 
-                            size="small" 
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onRemove();
-                            }}
-                            sx={{ 
-                                padding: 0.5,
-                                opacity: 0.7,
-                                '&:hover': {
-                                    opacity: 1,
-                                    color: 'error.main'
-                                }
-                            }}
-                        >
-                            <CloseIcon sx={{ fontSize: '1rem' }} />
-                        </IconButton>
+                        {typeof onRemove === 'function' && (
+                            <IconButton 
+                                size="small" 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onRemove();
+                                }}
+                                sx={{ 
+                                    padding: 0.5,
+                                    opacity: 0.7,
+                                    '&:hover': {
+                                        opacity: 1,
+                                        color: 'error.main'
+                                    }
+                                }}
+                            >
+                                <CloseIcon sx={{ fontSize: '1rem' }} />
+                            </IconButton>
+                        )}
                         <IconButton 
                             size="small"
                             onClick={(e) => {

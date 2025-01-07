@@ -1,0 +1,12 @@
+First terminal: 
+
+$ cd server
+$ micromamba activate super-prompt 
+$ uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+Second terminal: 
+
+$ cd client
+$ micromamba activate super-prompt
+$ npm install
+$ npm start
