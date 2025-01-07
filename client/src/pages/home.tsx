@@ -113,30 +113,7 @@ export default function Home() {
           overflow: "hidden"
         }}
       >
-        {/* Toggle Button for Advanced Features */}
-        <Box
-          sx={{
-            width: 200,
-            flexShrink: 0,
-            borderRight: 1,
-            borderColor: "divider",
-            bgcolor: "background.paper",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            p: 2,
-            gap: 2
-          }}
-        >
-          <Button
-            variant="contained"
-            onClick={() => setShowAdvanced(!showAdvanced)}
-          >
-            {showAdvanced ? "Hide Advanced" : "Show Advanced"}
-          </Button>
-        </Box>
-
-        {/* Advanced Features Hidden by Default */}
+        {/* Advanced Features Panel */}
         {showAdvanced && (
           <Box
             sx={{
@@ -164,13 +141,15 @@ export default function Home() {
             gap: 3
           }}
         >
-          <Paper elevation={0} sx={{ p: 3, bgcolor: "grey.50" }}>
-            <SystemPromptInput
-              value={systemPrompt}
-              onChange={setSystemPrompt}
-              onFileTreeChange={setIncludeFileTree}
-            />
-          </Paper>
+          {showAdvanced && (
+            <Paper elevation={0} sx={{ p: 3, bgcolor: "grey.50" }}>
+              <SystemPromptInput
+                value={systemPrompt}
+                onChange={setSystemPrompt}
+                onFileTreeChange={setIncludeFileTree}
+              />
+            </Paper>
+          )}
 
           <Paper elevation={0} sx={{ p: 3, bgcolor: "grey.50" }}>
             <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 500 }}>
@@ -185,6 +164,24 @@ export default function Home() {
               placeholder="Enter your prompt here..."
             />
           </Paper>
+
+          {/* Show/Hide Advanced Button */}
+          <Box sx={{ alignSelf: 'flex-start', mt: -1 }}>
+            <Button
+              size="small"
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              sx={{ 
+                textTransform: 'none',
+                color: 'text.secondary',
+                '&:hover': {
+                  backgroundColor: 'transparent',
+                  color: 'primary.main'
+                }
+              }}
+            >
+              {showAdvanced ? "Hide advanced options" : "Show advanced options"}
+            </Button>
+          </Box>
 
           {showAdvanced && (
             <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
