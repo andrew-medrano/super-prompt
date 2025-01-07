@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, KeyboardEvent, ChangeEvent } from 'react';
 import { 
     Box, 
     TextField, 
@@ -11,40 +11,41 @@ import {
     Checkbox
 } from '@mui/material';
 import { Help as HelpIcon } from '@mui/icons-material';
-import ContentBlock from './ContentBlock';
+import { ContentBlock } from '../components/content-block';
 import { PRESET_PROMPTS } from '../config/presets';
+import { SystemPromptInputProps, PresetPrompt } from '../types/prompt';
 
-const SystemPromptInput = ({ value, onChange, onFileTreeChange }) => {
-    const [isEditing, setIsEditing] = useState(!value);
-    const [localValue, setLocalValue] = useState(value || '');
-    const [activePreset, setActivePreset] = useState(null);
-    const [includeFileTree, setIncludeFileTree] = useState(false);
+export const SystemPromptInput: React.FC<SystemPromptInputProps> = ({ value, onChange, onFileTreeChange }) => {
+    const [isEditing, setIsEditing] = useState<boolean>(!value);
+    const [localValue, setLocalValue] = useState<string>(value || '');
+    const [activePreset, setActivePreset] = useState<string | null>(null);
+    const [includeFileTree, setIncludeFileTree] = useState<boolean>(false);
     const tokenCount = Math.round(localValue.split(/\s+/).length * 1.3);
 
-    const handlePresetClick = (key, preset) => {
+    const handlePresetClick = (key: string, preset: PresetPrompt): void => {
         setActivePreset(key);
         setLocalValue(preset.prompt);
         onChange(preset.prompt);
         setIsEditing(false);
     };
 
-    const handleSave = () => {
+    const handleSave = (): void => {
         onChange(localValue);
         setIsEditing(false);
     };
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>): void => {
         if (e.key === 'Enter' && e.ctrlKey) {
             handleSave();
         }
     };
 
-    const handleFileTreeToggle = (event) => {
+    const handleFileTreeToggle = (event: ChangeEvent<HTMLInputElement>): void => {
         setIncludeFileTree(event.target.checked);
         onFileTreeChange(event.target.checked);
     };
 
-    const handleRemove = () => {
+    const handleRemove = (): void => {
         setLocalValue('');
         onChange('');
         setActivePreset(null);
@@ -80,7 +81,7 @@ const SystemPromptInput = ({ value, onChange, onFileTreeChange }) => {
             </Box>
 
             <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
-                {Object.entries(PRESET_PROMPTS).map(([key, preset]) => (
+                {(Object.entries(PRESET_PROMPTS) as [string, PresetPrompt][]).map(([key, preset]) => (
                     <Button
                         key={key}
                         variant={activePreset === key ? "contained" : "outlined"}
@@ -124,6 +125,4 @@ const SystemPromptInput = ({ value, onChange, onFileTreeChange }) => {
             )}
         </Box>
     );
-};
-
-export default SystemPromptInput; 
+}; 

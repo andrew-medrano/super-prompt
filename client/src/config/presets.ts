@@ -1,4 +1,6 @@
-export const PRESET_PROMPTS = {
+import { PresetPrompts } from '../types/prompt';
+
+export const PRESET_PROMPTS: PresetPrompts = {
     expertEngineer: {
         name: "o1 xml instructions",
         prompt: `You are an expert software engineer.

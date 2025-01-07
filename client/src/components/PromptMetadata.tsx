@@ -1,15 +1,16 @@
 import React from 'react';
 import { Box, Typography, Chip } from '@mui/material';
 import { Description, Code, Token } from '@mui/icons-material';
+import { PromptMetadataProps } from '../types/prompt';
 
-const formatTokenCount = (count) => {
+const formatTokenCount = (count: number): string => {
     if (count === 0) return '~0';
     if (count < 100) return `~${count}`;
     if (count < 1000) return `~${Math.round(count/10)*10}`;
     return `~${(Math.round(count/100)/10).toFixed(1)}k`;
 };
 
-const PromptMetadata = ({ fileCount, systemPromptCount, totalTokens }) => {
+const PromptMetadata: React.FC<PromptMetadataProps> = ({ fileCount, systemPromptCount, totalTokens }) => {
     return (
         <Box sx={{ 
             display: 'flex', 
