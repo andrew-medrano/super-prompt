@@ -71,7 +71,11 @@ function getAllFilesCount(node: FileTreeNode): number {
 
 function FileTreeItem({ item, level = 0, onFileClick, selectedFiles }: FileTreeItemProps) {
   const [open, setOpen] = useState(false);
-  const isSelected = selectedFiles.some(f => f.path === item.path);
+  const isSelected = selectedFiles.some(f => {
+    const relativePath = f.path.split("super_prompt/")[1] || f.path;
+    const itemPath = item.path.split("super_prompt/")[1] || item.path;
+    return relativePath === itemPath;
+  });
 
   const handleClick = () => {
     if (item.type === "directory") {
@@ -105,7 +109,8 @@ function FileTreeItem({ item, level = 0, onFileClick, selectedFiles }: FileTreeI
           sx={{
             ".MuiListItemText-primary": {
               color: isSelected ? "primary.main" : "text.primary",
-              fontWeight: isSelected ? 500 : 400
+              fontWeight: isSelected ? 500 : 400,
+              fontSize: "0.875rem"
             }
           }}
         />
@@ -115,7 +120,7 @@ function FileTreeItem({ item, level = 0, onFileClick, selectedFiles }: FileTreeI
         {isSelected && (
           <CheckCircle 
             color="primary" 
-            sx={{ ml: 1, fontSize: 20 }}
+            sx={{ ml: 1, fontSize: 16 }}
           />
         )}
       </ListItemButton>
@@ -215,11 +220,17 @@ export const FileSelector: React.FC<FileSelectorProps> = ({ onFilesChange }) => 
   };
 
   const handleFileClick = async (file: FileTreeNode) => {
-    const alreadySelected = selectedFiles.some(f => f.path === file.path);
-    let newSelectedFiles: SelectedFile[];
+    const relativePath = file.path.split("super_prompt/")[1] || file.path;
+    const alreadySelected = selectedFiles.some(f => {
+      const selectedRelativePath = f.path.split("super_prompt/")[1] || f.path;
+      return selectedRelativePath === relativePath;
+    });
 
     if (alreadySelected) {
-      newSelectedFiles = selectedFiles.filter(f => f.path !== file.path);
+      const newSelectedFiles = selectedFiles.filter(f => {
+        const selectedRelativePath = f.path.split("super_prompt/")[1] || f.path;
+        return selectedRelativePath !== relativePath;
+      });
       setSelectedFiles(newSelectedFiles);
       onFilesChange(newSelectedFiles);
       return;
@@ -246,9 +257,7 @@ export const FileSelector: React.FC<FileSelectorProps> = ({ onFilesChange }) => 
         tokenCount = response.content.token_count;
       }
 
-      const relativePath = file.path.split("super_prompt/")[1] || file.path;
-
-      newSelectedFiles = [...selectedFiles, {
+      const newSelectedFiles = [...selectedFiles, {
         path: relativePath,
         content,
         tokenCount,
