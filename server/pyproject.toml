@@ -1,0 +1,21 @@
+[project]
+name = "super-prompt"
+version = "1.0.0"
+description = "A powerful tool for creating context-aware prompts for AI models"
+requires-python = ">=3.8"
+dependencies = [
+    "fastapi==0.104.1",
+    "uvicorn==0.24.0",
+    "python-multipart==0.0.6",
+    "pydantic==2.5.2",
+    "python-jose[cryptography]==3.3.0",
+    "passlib[bcrypt]==1.7.4"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+exclude = []
+requirements-file = "requirements.txt" 
