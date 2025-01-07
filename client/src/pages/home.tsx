@@ -5,11 +5,12 @@ import {
   Box,
   Paper,
   Typography,
-  TextField
+  TextField,
+  Button
 } from "@mui/material";
 import { FileSelector } from "../components/file-selector";
 import { SystemPromptInput } from "../components/system-prompt-input";
-import { CompiledPrompt } from "../components/compiled-prompt";
+import { OutputPrompt } from "../components/output-prompt";
 import { PromptMetadata } from "../components/prompt-metadata";
 
 interface SelectedFile {
@@ -25,6 +26,9 @@ export default function Home() {
   const [systemPrompt, setSystemPrompt] = useState("");
   const [mainPrompt, setMainPrompt] = useState("");
   const [includeFileTree, setIncludeFileTree] = useState(false);
+
+  // New state to hide advanced features
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const generateFileTree = (files: SelectedFile[]): string => {
     const dirMap = new Map<string, string>();
@@ -109,20 +113,46 @@ export default function Home() {
           overflow: "hidden"
         }}
       >
+        {/* Toggle Button for Advanced Features */}
         <Box
           sx={{
-            width: 400,
+            width: 200,
             flexShrink: 0,
             borderRight: 1,
             borderColor: "divider",
             bgcolor: "background.paper",
-            overflow: "hidden",
             display: "flex",
-            flexDirection: "column"
+            flexDirection: "column",
+            alignItems: "center",
+            p: 2,
+            gap: 2
           }}
         >
-          <FileSelector onFilesChange={setSelectedFiles} />
+          <Button
+            variant="contained"
+            onClick={() => setShowAdvanced(!showAdvanced)}
+          >
+            {showAdvanced ? "Hide Advanced" : "Show Advanced"}
+          </Button>
         </Box>
+
+        {/* Advanced Features Hidden by Default */}
+        {showAdvanced && (
+          <Box
+            sx={{
+              width: 400,
+              flexShrink: 0,
+              borderRight: 1,
+              borderColor: "divider",
+              bgcolor: "background.paper",
+              overflow: "hidden",
+              display: "flex",
+              flexDirection: "column"
+            }}
+          >
+            <FileSelector onFilesChange={setSelectedFiles} />
+          </Box>
+        )}
 
         <Box
           sx={{
@@ -156,28 +186,30 @@ export default function Home() {
             />
           </Paper>
 
-          <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
-            <Paper
-              elevation={0}
-              sx={{
-                p: 3,
-                bgcolor: "grey.50",
-                flexGrow: 1,
-                borderBottomLeftRadius: 0,
-                borderBottomRightRadius: 0
-              }}
-            >
-              <CompiledPrompt
-                prompt={compilePrompt()}
-                metadata={`${selectedFiles.length} files · ${getSystemPromptCount()} system prompts · ~${getTotalTokens()} tokens`}
+          {showAdvanced && (
+            <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
+              <Paper
+                elevation={0}
+                sx={{
+                  p: 3,
+                  bgcolor: "grey.50",
+                  flexGrow: 1,
+                  borderBottomLeftRadius: 0,
+                  borderBottomRightRadius: 0
+                }}
+              >
+                <OutputPrompt
+                  prompt={compilePrompt()}
+                  metadata={`${selectedFiles.length} files · ${getSystemPromptCount()} system prompts · ~${getTotalTokens()} tokens`}
+                />
+              </Paper>
+              <PromptMetadata
+                fileCount={selectedFiles.length}
+                systemPromptCount={getSystemPromptCount()}
+                totalTokens={getTotalTokens()}
               />
-            </Paper>
-            <PromptMetadata
-              fileCount={selectedFiles.length}
-              systemPromptCount={getSystemPromptCount()}
-              totalTokens={getTotalTokens()}
-            />
-          </Box>
+            </Box>
+          )}
         </Box>
       </Box>
     </Box>

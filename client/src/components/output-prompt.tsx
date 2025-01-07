@@ -14,9 +14,13 @@ import {
   ContentCopy as CopyIcon,
   Check as CheckIcon
 } from "@mui/icons-material";
-import { CompiledPromptProps } from '../types/prompt';
 
-export const CompiledPrompt: React.FC<CompiledPromptProps> = ({ prompt, metadata }) => {
+interface OutputPromptProps {
+  prompt: string;
+  metadata?: string;
+}
+
+export const OutputPrompt: React.FC<OutputPromptProps> = ({ prompt, metadata }) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -41,7 +45,7 @@ export const CompiledPrompt: React.FC<CompiledPromptProps> = ({ prompt, metadata
       >
         <Stack direction="row" spacing={2} alignItems="center">
           <Typography variant="h6">
-            Compiled Prompt
+            Output Prompt
           </Typography>
           {metadata && (
             <Typography variant="body2" color="text.secondary">

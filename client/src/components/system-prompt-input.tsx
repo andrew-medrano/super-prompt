@@ -1,4 +1,4 @@
-import React, { useState, KeyboardEvent, ChangeEvent } from 'react';
+import React, { useState, KeyboardEvent, ChangeEvent, useEffect } from 'react';
 import { 
     Box, 
     TextField, 
@@ -21,6 +21,15 @@ export const SystemPromptInput: React.FC<SystemPromptInputProps> = ({ value, onC
     const [activePreset, setActivePreset] = useState<string | null>(null);
     const [includeFileTree, setIncludeFileTree] = useState<boolean>(false);
     const tokenCount = Math.round(localValue.split(/\s+/).length * 1.3);
+
+    useEffect(() => {
+        // Optional: On mount, try loading a saved prompt
+        const saved = localStorage.getItem('savedSystemPrompt');
+        if (!value && saved) {
+            setLocalValue(saved);
+            onChange(saved);
+        }
+    }, [value, onChange]);
 
     const handlePresetClick = (key: string, preset: PresetPrompt): void => {
         setActivePreset(key);
@@ -50,6 +59,19 @@ export const SystemPromptInput: React.FC<SystemPromptInputProps> = ({ value, onC
         onChange('');
         setActivePreset(null);
         setIsEditing(false);
+    };
+
+    const handleSavePrompt = () => {
+        localStorage.setItem('savedSystemPrompt', localValue);
+    };
+
+    const handleLoadPrompt = () => {
+        const saved = localStorage.getItem('savedSystemPrompt');
+        if (saved) {
+            setLocalValue(saved);
+            onChange(saved);
+            setIsEditing(false);
+        }
     };
 
     return (
@@ -93,6 +115,15 @@ export const SystemPromptInput: React.FC<SystemPromptInputProps> = ({ value, onC
                 ))}
             </Stack>
 
+            <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+                <Button variant="outlined" size="small" onClick={handleSavePrompt}>
+                    Save Prompt
+                </Button>
+                <Button variant="outlined" size="small" onClick={handleLoadPrompt}>
+                    Load Prompt
+                </Button>
+            </Stack>
+
             {isEditing ? (
                 <TextField
                     fullWidth
@@ -125,4 +156,4 @@ export const SystemPromptInput: React.FC<SystemPromptInputProps> = ({ value, onC
             )}
         </Box>
     );
-}; 
+};

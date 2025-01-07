@@ -4,37 +4,47 @@ Copyright © 2024 Andrew Medrano. All rights reserved.
 
 ## Overview
 
-Super Prompt is a web application designed to help users create and manage system prompts with integrated file context. It features a modern React frontend and a FastAPI backend, with emphasis on performance and user experience.
+Super Prompt is a web application designed to help users create and manage system prompts with integrated file context. It features a modern React frontend with TypeScript and a FastAPI backend, emphasizing performance, type safety, and user experience.
 
 ## Architecture
 
-### Frontend (React + Material-UI)
+### Frontend (React + TypeScript + Material-UI)
 
 #### Components
-1. **SystemPromptInput**
+1. **FileSelector**
+   - VS Code-like file explorer interface
+   - Modern directory picker API support with fallback
+   - File selection with toggle support
+   - Visual feedback for selected files (checkmarks, highlighting)
+   - Support for both single file and directory selection
+   - Token count tracking per file
+   - Collapsible selected files preview
+
+2. **SystemPromptInput**
    - Rich text editor for system prompts
    - Support for preset prompts
    - Real-time token counting
-
-2. **FileSelector**
-   - VS Code-like file explorer interface
-   - Directory tree visualization
-   - File selection with multi-select support
-   - Path display relative to project root
-   - Token count estimation for selected files
-   - Support for `.superignore` patterns
+   - Toggle for file tree inclusion
 
 3. **ContentBlock**
-   - Displays selected file information
+   - Displays file or prompt content
    - Shows relative path from project root
    - Displays token count
    - Collapsible content preview
+   - Remove functionality
    - VS Code-like file icons
 
 4. **CompiledPrompt**
    - Shows the final compiled prompt
    - Displays total token count
-   - Supports copying to clipboard
+   - Copy to clipboard functionality
+   - Success feedback for copy operations
+
+5. **PromptMetadata**
+   - File count display
+   - System prompt count
+   - Total token count
+   - Material-UI chip-based interface
 
 ### Backend (FastAPI)
 
@@ -42,19 +52,19 @@ Super Prompt is a web application designed to help users create and manage syste
 1. **FileService**
    - File system operations
    - Directory tree generation
-   - File content reading
+   - File content reading with token counting
    - Support for `.superignore` patterns
-   - Token count estimation
+   - Path normalization and security
 
 2. **SuggestionService**
    - Prompt optimization suggestions
    - Token count calculation
    - Prompt compilation
 
-#### Routers
+#### API Endpoints
 1. **FilesRouter**
    - GET `/files/tree` - Get directory tree
-   - GET `/files/content` - Get file content
+   - GET `/files/content` - Get file content with token count
    - GET `/files/cwd` - Get current working directory
 
 2. **PromptsRouter**
@@ -63,64 +73,108 @@ Super Prompt is a web application designed to help users create and manage syste
 
 ## Data Flow
 
-1. User selects project directory
+1. User selects project directory using modern File System Access API
 2. Backend generates directory tree excluding ignored files
-3. User selects files and writes system prompt
-4. Backend compiles prompt with file contents
-5. Frontend displays compiled prompt with token count
+3. User selects files with immediate visual feedback
+4. Backend provides file content and token counts
+5. User writes system prompt and main prompt
+6. Frontend compiles all components into final prompt
 
-## Performance Considerations
+## Type System
+
+1. **File Types**
+   ```typescript
+   interface FileTreeNode {
+     type: "file" | "directory";
+     name: string;
+     path: string;
+     extension?: string;
+     children?: FileTreeNode[];
+   }
+
+   interface SelectedFile {
+     path: string;
+     content: string;
+     tokenCount?: number;
+     name?: string;
+     extension?: string;
+   }
+   ```
+
+2. **API Response Types**
+   ```typescript
+   interface FileContent {
+     content: string;
+     token_count: number;
+   }
+
+   interface FileContentResponse {
+     content: FileContent;
+   }
+   ```
+
+## Performance Optimizations
 
 1. **File Handling**
    - Lazy loading of file contents
-   - Caching of frequently accessed files
-   - Token count estimation without full content loading
+   - Token count caching
+   - Path normalization for consistent comparison
+   - Efficient file tree traversal
 
 2. **UI Performance**
-   - Virtual scrolling for large file trees
-   - Debounced prompt compilation
-   - Optimized re-renders
+   - Collapsible sections for large content
+   - Virtualized file tree for large directories
+   - Optimized re-renders with proper state management
+   - Debounced user interactions
 
 ## Security
 
 1. **File Access**
    - Restricted to project directory
-   - Respect `.superignore` patterns
-   - No write operations on files
+   - Path sanitization
+   - No write operations
+   - Modern File System Access API with permissions
 
 2. **API Security**
-   - CORS configuration for development
-   - Rate limiting for API endpoints
    - Input validation
+   - Path traversal prevention
+   - Rate limiting
+   - Error handling
 
-## Deployment
+## User Experience
 
-### Docker Support
-- Separate containers for frontend and backend
-- Nginx reverse proxy configuration
-- Production-ready Docker Compose setup
+1. **File Selection**
+   - Clear visual feedback for selected files
+   - Easy toggle selection
+   - Bulk selection support
+   - File type icons
+   - Collapsible file preview
 
-### Environment Configuration
-- Development and production configurations
-- Environment variable support
-- Configurable API endpoints
+2. **Prompt Management**
+   - Preset system prompts
+   - Real-time token counting
+   - Copy to clipboard with feedback
+   - Clear error messages
 
 ## Future Enhancements
 
 1. **File Management**
-   - File content search
+   - Search functionality
    - Multiple directory support
    - Custom ignore patterns
+   - File content search
 
 2. **Prompt Features**
    - Template support
    - Version history
    - Export/import functionality
+   - Custom token counting rules
 
 3. **UI Improvements**
    - Dark mode support
    - Customizable layout
    - Keyboard shortcuts
+   - Drag and drop support
 
 ## Legal & Licensing
 

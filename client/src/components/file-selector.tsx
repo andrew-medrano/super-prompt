@@ -322,113 +322,111 @@ export const FileSelector: React.FC<FileSelectorProps> = ({ onFilesChange }) => 
 
   return (
     <Box sx={{
+      // Updated styling here:
+      p: 3,
+      borderBottom: 1,
+      borderColor: "divider",
+      bgcolor: "grey.100",
       display: "flex",
       flexDirection: "column",
       height: "100%"
     }}>
-      <Box sx={{
-        p: 2,
-        borderBottom: 1,
-        borderColor: "divider",
-        bgcolor: "background.paper"
-      }}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
-            File Explorer
-          </Typography>
-          <Box sx={{ display: "flex", gap: 1, ml: "auto" }}>
-            <Button
-              startIcon={<Add />}
-              size="small"
-              onClick={handleDirectorySelect}
-              variant="outlined"
-            >
-              Select Directory
-            </Button>
-            {tree && (
-              <>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
+        <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
+          Project Files
+        </Typography>
+        <Box sx={{ display: "flex", gap: 1, ml: "auto" }}>
+          <Button
+            startIcon={<Add />}
+            size="small"
+            onClick={handleDirectorySelect}
+            variant="outlined"
+          >
+            Select Directory
+          </Button>
+          {tree && (
+            <>
+              <Button
+                startIcon={<CheckCircle />}
+                size="small"
+                onClick={handleSelectAll}
+                variant="outlined"
+                color="secondary"
+                disabled={selectedFiles.length === getAllFilesCount(tree)}
+              >
+                Select All Files
+              </Button>
+              {selectedFiles.length > 0 && (
                 <Button
-                  startIcon={<CheckCircle />}
                   size="small"
-                  onClick={handleSelectAll}
+                  onClick={() => {
+                    setSelectedFiles([]);
+                    onFilesChange([]);
+                  }}
                   variant="outlined"
-                  color="secondary"
-                  disabled={selectedFiles.length === getAllFilesCount(tree)}
+                  color="error"
                 >
-                  Select All Files
+                  Clear All
                 </Button>
-                {selectedFiles.length > 0 && (
-                  <Button
-                    size="small"
-                    onClick={() => {
-                      setSelectedFiles([]);
-                      onFilesChange([]);
-                    }}
-                    variant="outlined"
-                    color="error"
-                  >
-                    Clear All
-                  </Button>
-                )}
-              </>
-            )}
-          </Box>
+              )}
+            </>
+          )}
         </Box>
-
-        {selectedFiles.length > 0 && (
-          <Box sx={{ mb: 2 }}>
-            <Box
-              onClick={() => setIsExpanded(!isExpanded)}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                cursor: "pointer",
-                mb: isExpanded ? 1 : 0,
-                "&:hover": {
-                  bgcolor: "action.hover"
-                },
-                py: 1,
-                px: 2,
-                borderRadius: 1,
-                border: 1,
-                borderColor: "divider",
-                minHeight: 40
-              }}
-            >
-              {isExpanded ? <ExpandLess /> : <ExpandMore />}
-              <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-                Selected Files ({selectedFiles.length}) - {selectedFiles.reduce((acc, file) => acc + (file.tokenCount || 0), 0)} tokens
-              </Typography>
-            </Box>
-            <Collapse in={isExpanded} timeout="auto">
-              <Box sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 1,
-                height: selectedFiles.length > 4 ? "400px" : "auto",
-                maxHeight: "600px",
-                overflow: "auto",
-                px: 2,
-                py: 1,
-                border: 1,
-                borderColor: "divider",
-                borderRadius: 1,
-                bgcolor: "background.paper"
-              }}>
-                {selectedFiles.map((file) => (
-                  <ContentBlock
-                    key={file.path}
-                    title={file.path}
-                    content={file.content}
-                    tokenCount={file.tokenCount || 0}
-                    onRemove={() => handleRemoveFile(file)}
-                  />
-                ))}
-              </Box>
-            </Collapse>
-          </Box>
-        )}
       </Box>
+
+      {selectedFiles.length > 0 && (
+        <Box sx={{ mb: 2 }}>
+          <Box
+            onClick={() => setIsExpanded(!isExpanded)}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              cursor: "pointer",
+              mb: isExpanded ? 1 : 0,
+              "&:hover": {
+                bgcolor: "action.hover"
+              },
+              py: 1,
+              px: 2,
+              borderRadius: 1,
+              border: 1,
+              borderColor: "divider",
+              minHeight: 40
+            }}
+          >
+            {isExpanded ? <ExpandLess /> : <ExpandMore />}
+            <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+              Selected Files ({selectedFiles.length}) - {selectedFiles.reduce((acc, file) => acc + (file.tokenCount || 0), 0)} tokens
+            </Typography>
+          </Box>
+          <Collapse in={isExpanded} timeout="auto">
+            <Box sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+              height: selectedFiles.length > 4 ? "400px" : "auto",
+              maxHeight: "600px",
+              overflow: "auto",
+              px: 2,
+              py: 1,
+              border: 1,
+              borderColor: "divider",
+              borderRadius: 1,
+              bgcolor: "background.paper"
+            }}>
+              {selectedFiles.map((file) => (
+                <ContentBlock
+                  key={file.path}
+                  title={file.path}
+                  content={file.content}
+                  tokenCount={file.tokenCount || 0}
+                  onRemove={() => handleRemoveFile(file)}
+                />
+              ))}
+            </Box>
+          </Collapse>
+        </Box>
+      )}
 
       <input
         type="file"

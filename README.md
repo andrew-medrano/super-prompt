@@ -1,140 +1,110 @@
 # Super Prompt
 
-A modern web application for managing and optimizing system prompts with file context integration.
-
-Copyright © 2024 Andrew Medrano. All rights reserved.
+A modern web application for creating and managing AI system prompts with integrated file context.
 
 ## Features
 
-- 🚀 Modern React frontend with Material-UI
-- 🔧 FastAPI backend with optimized performance
-- 📁 VS Code-like file explorer with:
-  - Directory tree visualization
-  - File selection and multi-select
-  - Token count estimation
-  - Path display relative to project root
-- 💾 Efficient file handling and caching
-- 🎨 Preset system prompts
+- 📁 VS Code-like file explorer
 - 🔄 Real-time token counting
-- 🌐 CORS support for development
-- 🐳 Docker support for production deployment
+- 📝 System prompt presets
+- 🌳 File tree integration
+- 📋 One-click copy to clipboard
+- 📊 Token usage analytics
+- 🎨 Modern Material-UI interface
 
 ## Getting Started
 
 ### Prerequisites
 
-- Python 3.8 or higher
-- Node.js 16 or higher
-- `uv` package manager (recommended) or `pip`
+- Node.js (v16 or higher)
+- Python 3.8+
+- pip
 
-### Installation
+### Frontend Setup
 
-1. Clone the repository:
 ```bash
-git clone <your-repo-url>
-cd super_prompt
-```
-
-2. Set up the Python backend:
-```bash
-cd server
-uv venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-uv pip install -r requirements.txt
-```
-
-3. Set up the React frontend:
-```bash
-cd ../client
-npm install
-```
-
-### Development
-
-1. Start the FastAPI server:
-```bash
-cd server
-uvicorn main:app --reload
-```
-
-2. In a new terminal, start the React development server:
-```bash
+# Navigate to client directory
 cd client
+
+# Install dependencies
+npm install
+
+# Start development server
 npm start
 ```
 
-The application will be available at:
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
+The frontend will be available at `http://localhost:3000`
 
-### Production Deployment
-
-Use Docker for production deployment:
+### Backend Setup
 
 ```bash
-docker-compose up --build
+# Navigate to server directory
+cd server
+
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+source venv/bin/activate  # Unix/macOS
+venv\\Scripts\\activate   # Windows
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Start server
+uvicorn main:app --reload
 ```
 
-This will build and start both the frontend and backend services.
+The backend API will be available at `http://localhost:8000`
 
-## Project Structure
+## Usage
+
+1. Click "Select Directory" to choose your project folder
+2. Select files you want to include in your prompt
+3. Write or choose a system prompt
+4. Add your main prompt
+5. Copy the compiled prompt to use with your AI model
+
+## Development
+
+### Tech Stack
+
+- Frontend:
+  - React with TypeScript
+  - Material-UI v5
+  - Modern browser APIs
+  - Axios for HTTP requests
+
+- Backend:
+  - FastAPI
+  - Python 3.8+
+  - Token counting utilities
+
+### Project Structure
 
 ```
 super_prompt/
-├── client/                 # React frontend
+├── client/               # Frontend React application
 │   ├── src/
-│   │   ├── components/    # React components
-│   │   ├── services/      # API services
-│   │   └── ...
+│   │   ├── components/  # React components
+│   │   ├── services/    # API services
+│   │   ├── types/       # TypeScript types
+│   │   └── config/      # Configuration files
 │   └── package.json
-├── server/                # FastAPI backend
-│   ├── models/           # Data models
-│   ├── routers/          # API routes
-│   ├── services/         # Business logic
-│   └── main.py          # Server entry point
-├── docker/               # Docker configuration
-│   ├── Dockerfile.server
-│   └── nginx.conf
-├── docker-compose.yml
-└── .superignore         # File ignore patterns
-```
-
-## Configuration
-
-### .superignore
-
-The `.superignore` file specifies which files and directories should be excluded from the file explorer. Common patterns are:
-
-```
-node_modules/
-venv/
-.env/
-__pycache__/
-package-lock.json
-*.pyc
-.git/
+├── server/              # Backend FastAPI application
+│   ├── routers/         # API routes
+│   ├── services/        # Business logic
+│   └── requirements.txt
+└── README.md
 ```
 
 ## Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+This is a proprietary project. Contributions are not currently accepted.
 
 ## License
 
-This software is proprietary and confidential. All rights reserved.
+Copyright © 2024 Andrew Medrano. All rights reserved.
 
-Usage is subject to the terms of the proprietary license included in the [LICENSE](LICENSE) file.
-
-Key restrictions:
-- ❌ No commercial use without a separate license
-- ❌ No modification or distribution
-- ❌ No derivative works
-- ✅ Personal evaluation use only
-
-The software is protected by copyright law and international treaties.
-For commercial licensing inquiries, custom development, or other business opportunities,
-please contact Andrew Medrano directly. 
+This software is proprietary and confidential. Unauthorized copying, modification,
+distribution, or use of this software, via any medium, is strictly prohibited. 
